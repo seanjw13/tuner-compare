@@ -118,6 +118,7 @@ sm_client = boto3.client("sagemaker", region_name="us-west-2")
 sess = sagemaker.session.Session(boto3.session.Session(region_name="us-west-2"), sagemaker_client=sm_client)
 
 estimator = SKLearn(entry_point="entry_point.py", 
+                    source_dir="train_dir",
                     framework_version="0.23-1",
                     role="arn:aws:iam::997819012307:role/service-role/AmazonSageMaker-ExecutionRole-20200318T125733",
                     region="us-west-2",
