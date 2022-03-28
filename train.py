@@ -1,14 +1,19 @@
-from sklearn.ensemble import GradientBoostingRegressor as gbr
+#from sklearn.ensemble import GradientBoostingRegressor as gbr
 
-def train_model(num_est=10, max_depth=5, lr=.01):
+def train_model(train_data, test_data, n_est=10, max_depth=5, lr=.01, 
+                label="quality"):
 
     # Create ensemble model
     model = gbr(learning_rate=lr,
-                n_estimators=num_est,
+                n_estimators=n_est,
                 max_depth=max_depth)
 
-    model.fit(train_x, train_y)
-    eval_results = model.score(test_x, test_y)
+    train_y = train_data.pop(label)
+    test_y = test_data.pop(label)
 
-# Save model
-#joblib.dump(regressor, os.path.join(args.sm_model_dir, "model.joblib"))
+    print("""Training a new model with a learning rate of {}, {} estimators,
+          and a max_depth of {}""".format(lr, n_est, max_depth))
+
+    model.fit(train_data, train_y)
+    
+    return model.score(test_data, test_y)

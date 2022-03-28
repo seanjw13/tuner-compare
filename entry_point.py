@@ -1,33 +1,45 @@
 import argparse, os
+from numpy import float80
+import pandas as pd
+
+from train import train_model
 
 def parse_sage_args():
     # Pass in environment variables and hyperparameters
     parser = argparse.ArgumentParser()
 
     # Hyperparameters
+    parser.add_argument("--lr", type=float, default=.01)
     parser.add_argument("--estimators", type=int, default=15)
+    parser.add_argument("--max_depth", type=int, default=5)
 
     # sm_model_dir: model artifacts stored here after training
     parser.add_argument("--sm-model-dir", type=str, default=os.environ.get("SM_MODEL_DIR"))
     parser.add_argument("--model_dir", type=str)
-    parser.add_argument("--train", type=str, default=os.environ.get("SM_CHANNEL_TRAIN"))
+    parser.add_argument("--train", type=str, default=os.environ.get("SM_CHANNEL_TRAINING"))
+    parser.add_argument("--test", type=str, default=os.environ.get("SM_CHANNEL_TEST"))
 
     args, _ = parser.parse_known_args()
 
     return args
 
+def load_data(training_dir, test_dir):
+    
+    train_data = pd.read_csv(training_dir + "/train.csv")
+    test_data = pd.read_csv(test_dir + "/test.csv")
+
+    return train_data, test_data
+
 if __name__ == "__main__":
 
     args = parse_sage_args()
 
-    # Read locally training files
-    train_folder = os.getenv("SM_CHANNEL_TRAINING")
-    estimators = args.estimators
-    model_dir = args.model_dir
-    sm_model_dir = args.sm_model_dir
-    training_dir = args.train
+    # Read local data    
+    train_data, test_data = load_data(args.train, args.test)
 
-    print("Content of training_dir: {}\n".format(os.listdir(training_dir)))
-    print("Chosen hyperparameters are: {}\n".format(estimators))
-    print("The local directory that holds the training data is: {}\n".format(train_folder))
-    print("Content of training_dir: {}\n".format(os.listdir(train_folder)))
+    val_metric = train_model(train_data, test_data, lr=args.lr, 
+                             n_est=args.estimators, max_depth=args.max_depth)
+
+    # Print out validation metric so SageMaker hyperparameter tuner can parse
+    # the logs and read it.
+    print("Model validation metric (R2):{%.02}".format(val_metric))
