@@ -1,5 +1,4 @@
 import argparse, os
-from numpy import float80
 import pandas as pd
 
 from train import train_model
