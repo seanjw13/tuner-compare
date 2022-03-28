@@ -8,12 +8,15 @@ def train_model(train_data, test_data, n_est=10, max_depth=5, lr=.01,
                 n_estimators=n_est,
                 max_depth=max_depth)
 
-    train_y = train_data.pop(label)
-    test_y = test_data.pop(label)
+    loc_train_data = train_data.copy()
+    loc_test_data = test_data.copy()
+    
+    train_y = loc_train_data.pop(label)
+    test_y = loc_test_data.pop(label)
 
     print("""Training a new model with a learning rate of {}, {} estimators,
           and a max_depth of {}""".format(lr, n_est, max_depth))
 
-    model.fit(train_data, train_y)
+    model.fit(loc_train_data, train_y)
     
-    return model.score(test_data, test_y)
+    return model.score(loc_test_data, test_y)

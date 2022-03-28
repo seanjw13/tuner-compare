@@ -9,7 +9,7 @@ def parse_sage_args():
 
     # Hyperparameters
     parser.add_argument("--lr", type=float, default=.01)
-    parser.add_argument("--estimators", type=int, default=15)
+    parser.add_argument("--n_est", type=int, default=15)
     parser.add_argument("--max_depth", type=int, default=5)
 
     # sm_model_dir: model artifacts stored here after training
@@ -37,8 +37,8 @@ if __name__ == "__main__":
     train_data, test_data = load_data(args.train, args.test)
 
     val_metric = train_model(train_data, test_data, lr=args.lr, 
-                             n_est=args.estimators, max_depth=args.max_depth)
+                             n_est=args.n_est, max_depth=args.max_depth)
 
     # Print out validation metric so SageMaker hyperparameter tuner can parse
     # the logs and read it.
-    print("Model validation metric (R2):{0:.4f}".format(val_metric))
+    print("Model validation metric R2:{0:.4f};".format(val_metric))
