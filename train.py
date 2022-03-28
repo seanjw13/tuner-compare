@@ -1,4 +1,4 @@
-#from sklearn.ensemble import GradientBoostingRegressor as gbr
+from sklearn.ensemble import GradientBoostingRegressor as gbr
 
 def train_model(train_data, test_data, n_est=10, max_depth=5, lr=.01, 
                 label="quality"):
