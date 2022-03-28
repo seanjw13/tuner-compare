@@ -123,7 +123,7 @@ estimator = SKLearn(entry_point="entry_point.py",
                     role="arn:aws:iam::997819012307:role/service-role/AmazonSageMaker-ExecutionRole-20200318T125733",
                     region="us-west-2",
                     instance_count=1,
-                    instance_type="ml.m5.2xlarge",
+                    instance_type="ml.m5.large",
                     sagemaker_session=sess)
 
 #sagemaker.tuner.HyperparameterTuner(estimator=estimator,
@@ -133,8 +133,14 @@ estimator = SKLearn(entry_point="entry_point.py",
 #                                    max_jobs,
 #                                    max_parallel_jobs)
 
-estimator.fit('s3://sagemaker-us-west-2-997819012307/data/')
+estimator.fit({'training':'s3://sagemaker-us-west-2-997819012307/data/train.csv',
+               'test': 's3://sagemaker-us-west-2-997819012307/data/test.csv'})
 #tuner.fit(wait=True)
+
+# COMMAND ----------
+
+a = 1.3434343
+print("{0:.3f}".format(a))
 
 # COMMAND ----------
 

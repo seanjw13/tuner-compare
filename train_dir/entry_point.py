@@ -41,4 +41,4 @@ if __name__ == "__main__":
 
     # Print out validation metric so SageMaker hyperparameter tuner can parse
     # the logs and read it.
-    print("Model validation metric (R2):{%.02}".format(val_metric))
+    print("Model validation metric (R2):{0:.4f}".format(val_metric))
