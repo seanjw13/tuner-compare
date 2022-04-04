@@ -1,0 +1,48 @@
+{
+	"timeout_seconds": 0,
+	"name": "tuner-compare",
+	"tasks": [{
+			"notebook_task": {
+				"notebook_path": "/Repos/sean.wilkinson@databricks.com/tuner-compare/launch-hyperopt"
+			},
+			"job_cluster_key": "tuner-cluster",
+			"timeout_seconds": 0,
+			"email_notifications": {},
+			"task_key": "hyperopt-tuner",
+			"description": ""
+		},
+		{
+			"job_cluster_key": "tuner-cluster",
+			"notebook_task": {
+				"notebook_path": "/Repos/sean.wilkinson@databricks.com/tuner-compare/launch-sagemaker-tuner"
+			},
+            "depends_on": [{"task_key": "hyperopt-tuner"}],
+			"timeout_seconds": 0,
+			"email_notifications": {},
+			"task_key": "sagemaker-tuner"
+		}
+	],
+	"job_clusters": [{
+		"job_cluster_key": "tuner-cluster",
+		"new_cluster": {
+			"spark_version": "10.3.x-cpu-ml-scala2.12",
+			"node_type_id": "m5.large",
+			"spark_conf": {
+				"spark.databricks.cluster.profile": "singleNode",
+                "spark.master": "local[*, 4]"
+			},
+            "num_workers": 0,
+			"aws_attributes": {
+				"first_on_demand": 1,
+				"ebs_volume_type": "GENERAL_PURPOSE_SSD",
+                "ebs_volume_count": 1,
+                "ebs_volume_size": 100,
+                "instance_profile_arn": "arn:aws:iam::997819012307:instance-profile/oetrta-IAM-access"
+			},
+            "policy_id": "E060384AFC00043E",
+            "custom_tags": {
+                "ResourceClass": "SingleNode"
+                }
+		}
+	}]
+}

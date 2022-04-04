@@ -1,15 +1,11 @@
 # Databricks notebook source
 import pandas as pd
 
-train_loc = dbutils.widgets.get("training_data")
-test_loc = dbutils.widgets.get("test_data")
-
-train_data = pd.read_csv(train_loc)
-test_data = pd.read_csv(test_loc)
+train_data = pd.read_csv("/dbfs/FileStore/data/train.csv")
+test_data = pd.read_csv("/dbfs/FileStore/data/test.csv")
 
 # COMMAND ----------
 
-import mlflow
 from hyperopt import STATUS_OK
 from train_dir.train import train_model
 
@@ -24,9 +20,9 @@ def objective(params):
 
 # COMMAND ----------
 
-from hyperopt import fmin, hp, tpe, SparkTrials
+from hyperopt import fmin, hp, tpe, space_eval, SparkTrials
 
-def tune_model_databricks(parallelism=1, max_evals=1, h_params=None):
+def tune_model_databricks(parallelism=1, max_evals=4, h_params=None):
   
   default_space = {
              'lr': hp.loguniform('learning_rate', -5, -1),
@@ -44,12 +40,11 @@ def tune_model_databricks(parallelism=1, max_evals=1, h_params=None):
                     max_evals=max_evals,
                     trials=trial)
   
-  return best_model
+  objective_metric = space_eval(space, best_model)
+  
+  return {"objective_metric": objective_metric, 
+          "best_params" : best_model}
 
 # COMMAND ----------
 
-tune_model_databricks()
-
-# COMMAND ----------
-
-
+best_model = tune_model_databricks()
